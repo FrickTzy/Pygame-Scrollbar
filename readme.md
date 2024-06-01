@@ -44,7 +44,7 @@ while running:
 
 ## Documentation
 
-For detailed documentation, please refer to the [github repository](API_REFERENCE.md).
+For detailed documentation, please refer to the [github repository](https://github.com/FrickTzy/Pygame-Scrollbar).
 
 ## License
 
