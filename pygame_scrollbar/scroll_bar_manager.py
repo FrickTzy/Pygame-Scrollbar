@@ -1,9 +1,10 @@
 from .content_bar import ContentBar
-from pygame import SRCALPHA, Surface
+from pygame import Surface
 from .scroll_speed_manager import ScrollSpeedManager
 from .scroll_speed_animation_manager import ScrollSpeedAnimationManager
 from .scroll_bar_event_handler import ScrollEventHandler
 from .scroll_bar_position import ScrollBarPosition
+from .scroll_surface_manager import ScrollSurfaceManager
 
 
 class ScrollBarManager:
@@ -19,18 +20,19 @@ class ScrollBarManager:
             margin (int, optional): Margin between content bars. Defaults to 10.
         """
         self.__check_if_content_bar(content_bar_list=content_bar_list)
-        self.__surface: Surface = Surface(size, SRCALPHA)
-        self.__content_bar_list: list[ContentBar] = content_bar_list
         self.__scroll_speed_manager: ScrollSpeedManager = ScrollSpeedManager()
-        self.__scroll_speed_animation_manager: ScrollSpeedAnimationManager = ScrollSpeedAnimationManager(
-            scroll_speed_manager=self.__scroll_speed_manager
-        )
         self.__position: ScrollBarPosition = ScrollBarPosition(
             margin_between_content_bar=margin, position=position, scroll_speed_manager=self.__scroll_speed_manager
         )
+        self.__surface_manager: ScrollSurfaceManager = ScrollSurfaceManager(size=size)
+        self.__content_bar_list: list[ContentBar] = content_bar_list
+        self.__scroll_speed_animation_manager: ScrollSpeedAnimationManager = ScrollSpeedAnimationManager(
+            scroll_speed_manager=self.__scroll_speed_manager
+        )
         self.__init_content_bar_list()
         self.__scroll_event_handler: ScrollEventHandler = ScrollEventHandler(
-            position=self.__position, scroll_speed_animation_manager=self.__scroll_speed_animation_manager
+            position=self.__position, scroll_speed_animation_manager=self.__scroll_speed_animation_manager,
+            scroll_surface_manager=self.__surface_manager
         )
 
     def __init_content_bar_list(self) -> None:
@@ -60,13 +62,14 @@ class ScrollBarManager:
             surface (Surface): The surface to render the content bars on.
             window_height (int): The height of the window to show the content bars.
         """
-        self.__scroll_event_handler.check_for_events(content_bar_list=self.__content_bar_list, surface=self.__surface)
-        self.__surface.fill((0, 0, 0, 0))
+        self.__scroll_event_handler.check_for_events(content_bar_list=self.__content_bar_list,
+                                                     surface=self.__surface_manager.surface)
+        self.__surface_manager.surface.fill((0, 0, 0, 0))
         for content_bar in self.__content_bar_list:
             content_bar.show(window_height=window_height)
-            self.__surface.blit(content_bar.surface, content_bar.position)
+            self.__surface_manager.surface.blit(content_bar.surface, content_bar.position)
         self.__position.finish_scroll()
-        surface.blit(self.__surface, self.__position.position)
+        surface.blit(self.__surface_manager.surface, self.__position.position)
 
     def check_if_scroll(self, event) -> None:
         """
