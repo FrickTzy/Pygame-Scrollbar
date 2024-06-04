@@ -37,16 +37,25 @@ class ContentBar:
             return
         draw.rect(self.surface, (100, 100, 100), self.rect)
 
-    def check_if_clicked(self) -> None:
+    def check_if_clicked(self) -> bool:
         """
         Checks if the content bar is clicked.
         """
+        if not self.check_if_hover():
+            return False
         mouse_buttons = mouse.get_pressed()
-        mouse_x, mouse_y = mouse.get_pos()
         if not mouse_buttons[0]:
-            return
+            return False
+        return True
+
+    def check_if_hover(self) -> bool:
+        """
+        Checks if the content bar is hovered.
+        """
+        mouse_x, mouse_y = mouse.get_pos()
         if not self.__position.check_if_click(mouse_x, mouse_y):
-            return
+            return False
+        return True
 
     def is_scrollable_down(self) -> bool:
         """

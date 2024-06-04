@@ -8,7 +8,8 @@ from pygame.surface import Surface
 
 
 class ScrollEventHandler:
-    def __init__(self, scroll_speed_animation_manager: ScrollSpeedAnimationManager, position: ScrollBarPosition, scroll_surface_manager: ScrollSurfaceManager):
+    def __init__(self, scroll_speed_animation_manager: ScrollSpeedAnimationManager, position: ScrollBarPosition,
+                 scroll_surface_manager: ScrollSurfaceManager, max_scroll_padding: int = 0):
         """
         Initializes the ScrollEventHandler.
 
@@ -22,6 +23,7 @@ class ScrollEventHandler:
         self.__activation_timer: ActivationTimer = ActivationTimer()
         self.__position: ScrollBarPosition = position
         self.__scroll_speed_animation_manager: ScrollSpeedAnimationManager = scroll_speed_animation_manager
+        self.__max_scroll_padding = max_scroll_padding
 
     def check_for_events(self, content_bar_list: list[ContentBar], surface: Surface) -> None:
         """
@@ -33,7 +35,8 @@ class ScrollEventHandler:
         """
         self.__check_if_stop_scroll()
         if self.__scroll_up:
-            if not content_bar_list[-1].is_scrollable_up(scroll_bar_height=surface.get_height(), padding=0):
+            if not content_bar_list[-1].is_scrollable_up(scroll_bar_height=surface.get_height(),
+                                                         padding=self.__max_scroll_padding):
                 return
             self.__position.scroll_up()
         else:

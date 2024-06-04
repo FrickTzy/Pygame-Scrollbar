@@ -3,10 +3,8 @@ from .scroll_speed_manager import ScrollSpeedManager
 
 
 class ScrollSpeedAnimationManager(AnimationManager):
-    __SPEED_PER_FRAME = 0.05
-
-    def __init__(self, scroll_speed_manager: ScrollSpeedManager):
-        super().__init__(percentage_per_iteration=self.__SPEED_PER_FRAME)
+    def __init__(self, scroll_speed_manager: ScrollSpeedManager, speed_per_frame: float = 0.05):
+        super().__init__(percentage_per_iteration=speed_per_frame)
         self.__scroll_speed_manager = scroll_speed_manager
 
     def animate(self) -> None:

@@ -9,7 +9,8 @@ from .scroll_surface_manager import ScrollSurfaceManager
 
 class ScrollBarManager:
     def __init__(self, size: tuple[int, int], content_bar_list: list[ContentBar], position: tuple[int, int],
-                 margin: int = 10):
+                 margin: int = 10, speed_per_frame: float = 0.05, max_scroll_speed: int = 20,
+                 max_scroll_padding: int = 0):
         """
         Initializes the ScrollBarManager.
 
@@ -20,19 +21,19 @@ class ScrollBarManager:
             margin (int, optional): Margin between content bars. Defaults to 10.
         """
         self.__check_if_content_bar(content_bar_list=content_bar_list)
-        self.__scroll_speed_manager: ScrollSpeedManager = ScrollSpeedManager()
+        self.__scroll_speed_manager: ScrollSpeedManager = ScrollSpeedManager(max_speed=max_scroll_speed)
         self.__position: ScrollBarPosition = ScrollBarPosition(
             margin_between_content_bar=margin, position=position, scroll_speed_manager=self.__scroll_speed_manager
         )
         self.__surface_manager: ScrollSurfaceManager = ScrollSurfaceManager(size=size)
         self.__content_bar_list: list[ContentBar] = content_bar_list
         self.__scroll_speed_animation_manager: ScrollSpeedAnimationManager = ScrollSpeedAnimationManager(
-            scroll_speed_manager=self.__scroll_speed_manager
+            scroll_speed_manager=self.__scroll_speed_manager, speed_per_frame=speed_per_frame
         )
         self.__init_content_bar_list()
         self.__scroll_event_handler: ScrollEventHandler = ScrollEventHandler(
             position=self.__position, scroll_speed_animation_manager=self.__scroll_speed_animation_manager,
-            scroll_surface_manager=self.__surface_manager
+            scroll_surface_manager=self.__surface_manager, max_scroll_padding=max_scroll_padding
         )
 
     def __init_content_bar_list(self) -> None:
